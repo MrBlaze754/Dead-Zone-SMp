@@ -1,0 +1,2354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Dead Zone SMP</title>
+
+    <meta
+        name="description"
+        content="Dead Zone SMP — Minecraft Survival Server"
+    >
+
+    <style>
+
+        /* ========================================
+           RESET
+        ======================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            color: #ffffff;
+
+            background: #030303;
+
+            overflow-x: hidden;
+        }
+
+
+        /* ========================================
+           BACKGROUND
+        ======================================== */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: -2;
+
+            background:
+
+                linear-gradient(
+                    rgba(0, 0, 0, 0.72),
+                    rgba(10, 0, 0, 0.96)
+                ),
+
+                url("https://images.unsplash.com/photo-1607513746994-51f730a44832?auto=format&fit=crop&w=2000&q=85")
+
+                center / cover
+
+                no-repeat;
+        }
+
+
+        body::after {
+
+            content: "";
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: -1;
+
+            pointer-events: none;
+
+            background:
+
+                radial-gradient(
+                    circle at 50% 35%,
+                    rgba(180, 0, 0, 0.20),
+                    transparent 45%
+                ),
+
+                radial-gradient(
+                    circle at 50% 100%,
+                    rgba(100, 0, 0, 0.15),
+                    transparent 50%
+                );
+        }
+
+
+        /* ========================================
+           NAVIGATION
+        ======================================== */
+
+        nav {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+            right: 0;
+
+            z-index: 1000;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 18px 7%;
+
+            background:
+                rgba(0, 0, 0, 0.72);
+
+            backdrop-filter:
+                blur(15px);
+
+            -webkit-backdrop-filter:
+                blur(15px);
+
+            border-bottom:
+                1px solid
+                rgba(255, 40, 40, 0.15);
+        }
+
+
+        .logo {
+
+            color: white;
+
+            font-size: 24px;
+
+            font-weight: 900;
+
+            letter-spacing: 1px;
+        }
+
+
+        .logo span {
+
+            color: #ef3333;
+
+            text-shadow:
+                0 0 20px
+                rgba(239, 51, 51, 0.5);
+        }
+
+
+        nav a {
+
+            color: #cccccc;
+
+            text-decoration: none;
+
+            margin-left: 25px;
+
+            font-size: 15px;
+
+            transition:
+                color .2s ease;
+        }
+
+
+        nav a:hover {
+
+            color: #ff4444;
+        }
+
+
+        /* ========================================
+           HERO
+        ======================================== */
+
+        .hero {
+
+            min-height: 100vh;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            padding:
+                130px
+                20px
+                80px;
+        }
+
+
+        .hero-content {
+
+            width: 100%;
+
+            max-width: 900px;
+
+            animation:
+                heroIn .8s ease;
+        }
+
+
+        @keyframes heroIn {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(25px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+
+        /* ========================================
+           BADGE
+        ======================================== */
+
+        .badge {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding:
+                9px
+                18px;
+
+            margin-bottom: 25px;
+
+            border-radius: 50px;
+
+            background:
+                rgba(255, 0, 0, 0.08);
+
+            border:
+                1px solid
+                rgba(255, 60, 60, 0.35);
+
+            color: #ff5b5b;
+
+            font-weight: bold;
+
+            font-size: 14px;
+
+            box-shadow:
+                0 0 30px
+                rgba(255, 0, 0, 0.08);
+        }
+
+
+        /* ========================================
+           TITLE
+        ======================================== */
+
+        h1 {
+
+            font-size:
+                clamp(
+                    55px,
+                    10vw,
+                    115px
+                );
+
+            line-height: .88;
+
+            font-weight: 900;
+
+            letter-spacing: -3px;
+
+            margin-bottom: 30px;
+
+            text-shadow:
+                0 0 35px
+                rgba(255, 0, 0, 0.12);
+        }
+
+
+        h1 span {
+
+            color: #ef3333;
+
+            text-shadow:
+                0 0 35px
+                rgba(239, 51, 51, 0.3);
+        }
+
+
+        .subtitle {
+
+            color: #aaaaaa;
+
+            font-size: 20px;
+
+            line-height: 1.65;
+
+            margin-bottom: 40px;
+        }
+
+
+        /* ========================================
+           SERVER BOX
+        ======================================== */
+
+        .server-box {
+
+            width: 100%;
+
+            max-width: 720px;
+
+            margin: auto;
+
+            padding: 28px;
+
+            background:
+                rgba(8, 8, 8, 0.90);
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.08);
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 30px 100px
+                rgba(0, 0, 0, 0.65);
+        }
+
+
+        /* ========================================
+           SERVER STATUS
+        ======================================== */
+
+        .status {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            margin-bottom: 7px;
+
+            color: #facc15;
+
+            font-size: 15px;
+
+            font-weight: bold;
+        }
+
+
+        .status-dot {
+
+            width: 11px;
+
+            height: 11px;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            background: #facc15;
+
+            box-shadow:
+                0 0 14px
+                #facc15;
+
+            animation:
+                pulse 1.5s infinite;
+        }
+
+
+        .status.online {
+
+            color: #4ade80;
+        }
+
+
+        .status.online .status-dot {
+
+            background: #4ade80;
+
+            box-shadow:
+                0 0 16px
+                #4ade80;
+        }
+
+
+        .status.offline {
+
+            color: #ef4444;
+        }
+
+
+        .status.offline .status-dot {
+
+            background: #ef4444;
+
+            box-shadow:
+                0 0 16px
+                #ef4444;
+        }
+
+
+        .status.error {
+
+            color: #facc15;
+        }
+
+
+        .status.error .status-dot {
+
+            background: #facc15;
+
+            box-shadow:
+                0 0 16px
+                #facc15;
+        }
+
+
+        @keyframes pulse {
+
+            50% {
+
+                opacity: .35;
+
+                transform:
+                    scale(.75);
+            }
+        }
+
+
+        .players {
+
+            color: #777777;
+
+            font-size: 14px;
+
+            margin-bottom: 18px;
+        }
+
+
+        /* ========================================
+           IP
+        ======================================== */
+
+        .ip {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            padding: 17px;
+
+            background:
+                rgba(255, 255, 255, 0.045);
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.05);
+
+            border-radius: 12px;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 16px;
+
+            word-break: break-all;
+        }
+
+
+        /* ========================================
+           BUTTONS
+        ======================================== */
+
+        button {
+
+            border: none;
+
+            cursor: pointer;
+
+            padding:
+                13px
+                20px;
+
+            border-radius: 10px;
+
+            background: #ef3333;
+
+            color: white;
+
+            font-weight: bold;
+
+            font-size: 14px;
+
+            transition:
+                .2s ease;
+        }
+
+
+        button:hover {
+
+            background: #ff5555;
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 8px 30px
+                rgba(255, 0, 0, 0.25);
+        }
+
+
+        button:active {
+
+            transform:
+                translateY(0);
+        }
+
+
+        .buttons {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+            margin-top: 20px;
+        }
+
+
+        .secondary {
+
+            background:
+                rgba(255, 255, 255, 0.07);
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.10);
+        }
+
+
+        .secondary:hover {
+
+            background:
+                rgba(255, 255, 255, 0.13);
+
+            box-shadow: none;
+        }
+
+
+        /* ========================================
+           SECTIONS
+        ======================================== */
+
+        section {
+
+            padding:
+                110px
+                7%;
+
+            background:
+                rgba(3, 3, 3, 0.95);
+        }
+
+
+        .section-title {
+
+            text-align: center;
+
+            font-size: 45px;
+
+            margin-bottom: 55px;
+
+            font-weight: 900;
+        }
+
+
+        .section-title span {
+
+            color: #ef3333;
+        }
+
+
+        /* ========================================
+           CARDS
+        ======================================== */
+
+        .cards {
+
+            max-width: 1150px;
+
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(250px, 1fr)
+                );
+
+            gap: 20px;
+        }
+
+
+        .card {
+
+            padding: 30px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.045),
+                    rgba(255,0,0,.015)
+                );
+
+            border:
+                1px solid
+                rgba(255,255,255,.07);
+
+            border-radius: 18px;
+
+            transition:
+                .25s ease;
+        }
+
+
+        .card:hover {
+
+            transform:
+                translateY(-7px);
+
+            border-color:
+                rgba(255,60,60,.35);
+
+            box-shadow:
+                0 20px 50px
+                rgba(255,0,0,.07);
+        }
+
+
+        .card h3 {
+
+            font-size: 21px;
+
+            margin-bottom: 13px;
+        }
+
+
+        .card p {
+
+            color: #999;
+
+            line-height: 1.7;
+
+            font-size: 15px;
+        }
+
+
+        .rule-number {
+
+            color: #ef3333;
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+            letter-spacing: 1px;
+
+            margin-bottom: 12px;
+        }
+
+
+        /* ========================================
+           DISCORD
+        ======================================== */
+
+        .discord {
+
+            max-width: 950px;
+
+            margin: auto;
+
+            padding:
+                60px
+                35px;
+
+            text-align: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(88,101,242,.18),
+                    rgba(20,20,30,.75)
+                );
+
+            border:
+                1px solid
+                rgba(88,101,242,.25);
+
+            border-radius: 25px;
+
+            box-shadow:
+                0 25px 70px
+                rgba(0,0,0,.3);
+        }
+
+
+        .discord h2 {
+
+            font-size: 42px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .discord p {
+
+            max-width: 650px;
+
+            margin:
+                0
+                auto
+                28px;
+
+            color: #aaaaaa;
+
+            line-height: 1.7;
+        }
+
+
+        .discord-button {
+
+            background: #5865F2;
+        }
+
+
+        .discord-button:hover {
+
+            background: #7289ff;
+
+            box-shadow:
+                0 10px 35px
+                rgba(88,101,242,.35);
+        }
+
+
+        /* ========================================
+           DONATE
+        ======================================== */
+
+        .donate {
+
+            max-width: 900px;
+
+            margin: auto;
+
+            padding: 55px;
+
+            text-align: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(255,0,0,.12),
+                    rgba(100,0,0,.08)
+                );
+
+            border:
+                1px solid
+                rgba(255,0,0,.15);
+
+            border-radius: 25px;
+        }
+
+
+        .donate h2 {
+
+            font-size: 40px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .donate p {
+
+            color: #999;
+
+            margin-bottom: 25px;
+
+            line-height: 1.6;
+        }
+
+
+        /* ========================================
+           NOTIFICATION
+        ======================================== */
+
+        .notification {
+
+            position: fixed;
+
+            right: 25px;
+
+            bottom: 25px;
+
+            z-index: 9999;
+
+            padding:
+                15px
+                20px;
+
+            background:
+                #111111;
+
+            border:
+                1px solid
+                rgba(255,255,255,.08);
+
+            border-left:
+                3px solid
+                #ef3333;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 15px 50px
+                rgba(0,0,0,.6);
+
+            transform:
+                translateY(120px);
+
+            opacity: 0;
+
+            transition:
+                .3s ease;
+
+            pointer-events: none;
+        }
+
+
+        .notification.show {
+
+            transform:
+                translateY(0);
+
+            opacity: 1;
+        }
+
+
+        /* ========================================
+           MODAL
+        ======================================== */
+
+        .modal {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 5000;
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(0,0,0,.78);
+
+            backdrop-filter:
+                blur(9px);
+
+            -webkit-backdrop-filter:
+                blur(9px);
+        }
+
+
+        .modal.show {
+
+            display: flex;
+        }
+
+
+        .modal-box {
+
+            position: relative;
+
+            width: 100%;
+
+            max-width: 580px;
+
+            max-height: 90vh;
+
+            overflow-y: auto;
+
+            padding: 35px;
+
+            background:
+                #0c0c0c;
+
+            border:
+                1px solid
+                rgba(239,51,51,.30);
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 30px 120px
+                rgba(0,0,0,.75);
+
+            animation:
+                modalIn .25s ease;
+        }
+
+
+        @keyframes modalIn {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    scale(.92)
+                    translateY(10px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    scale(1)
+                    translateY(0);
+            }
+        }
+
+
+        .modal-box h2 {
+
+            font-size: 30px;
+
+            margin-bottom: 22px;
+        }
+
+
+        .modal-box p {
+
+            color: #aaaaaa;
+
+            line-height: 1.75;
+        }
+
+
+        .modal-box code {
+
+            display: inline-block;
+
+            padding:
+                8px
+                12px;
+
+            margin-top: 5px;
+
+            color: #ff6b6b;
+
+            background:
+                rgba(255,0,0,.08);
+
+            border-radius: 7px;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            word-break: break-all;
+        }
+
+
+        .close {
+
+            position: absolute;
+
+            top: 14px;
+
+            right: 14px;
+
+            width: 36px;
+
+            height: 36px;
+
+            padding: 0;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255,255,255,.08);
+
+            font-size: 20px;
+
+            line-height: 36px;
+        }
+
+
+        .close:hover {
+
+            background: #ef3333;
+
+            box-shadow: none;
+        }
+
+
+        /* ========================================
+           FOOTER
+        ======================================== */
+
+        footer {
+
+            padding: 35px;
+
+            text-align: center;
+
+            color: #666;
+
+            background:
+                #020202;
+
+            border-top:
+                1px solid
+                rgba(255,255,255,.05);
+        }
+
+
+        /* ========================================
+           MOBILE
+        ======================================== */
+
+        @media (max-width: 700px) {
+
+            nav {
+
+                padding:
+                    16px
+                    5%;
+            }
+
+
+            nav > div:last-child {
+
+                display: none;
+            }
+
+
+            .hero {
+
+                padding:
+                    120px
+                    15px
+                    70px;
+            }
+
+
+            h1 {
+
+                letter-spacing:
+                    -2px;
+            }
+
+
+            .subtitle {
+
+                font-size: 17px;
+            }
+
+
+            .server-box {
+
+                padding: 20px;
+            }
+
+
+            .ip {
+
+                flex-direction: column;
+
+                font-size: 14px;
+            }
+
+
+            .ip button {
+
+                width: 100%;
+            }
+
+
+            section {
+
+                padding:
+                    75px
+                    5%;
+            }
+
+
+            .section-title {
+
+                font-size: 35px;
+            }
+
+
+            .discord,
+            .donate {
+
+                padding:
+                    35px
+                    20px;
+            }
+
+
+            .discord h2,
+            .donate h2 {
+
+                font-size: 32px;
+            }
+
+
+            .notification {
+
+                left: 20px;
+
+                right: 20px;
+
+                bottom: 20px;
+
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ========================================
+     NAVIGATION
+======================================== -->
+
+<nav>
+
+    <div class="logo">
+        Dead <span>Zone</span> SMP
+    </div>
+
+
+    <div>
+
+        <a href="#about">
+            About
+        </a>
+
+        <a href="#rules">
+            Rules
+        </a>
+
+        <a href="#discord">
+            Discord
+        </a>
+
+        <a href="#donate">
+            Donate
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<!-- ========================================
+     HERO
+======================================== -->
+
+<header class="hero">
+
+    <div class="hero-content">
+
+
+        <div class="badge">
+
+            🔴 DEAD ZONE SMP
+
+        </div>
+
+
+        <h1>
+
+            DEAD <span>ZONE</span>
+
+        </h1>
+
+
+        <p class="subtitle">
+
+            Welcome to Dead Zone SMP.<br>
+
+            Survive. Build. Fight.
+            Create your own story.
+
+        </p>
+
+
+
+        <div class="server-box">
+
+
+            <!-- STATUS -->
+
+            <div
+                class="status"
+                id="serverStatus"
+            >
+
+                <span class="status-dot"></span>
+
+                <span id="statusText">
+                    CHECKING SERVER...
+                </span>
+
+            </div>
+
+
+            <!-- PLAYERS -->
+
+            <div
+                class="players"
+                id="playersOnline"
+            >
+
+                Checking server...
+
+            </div>
+
+
+            <!-- IP -->
+
+            <div class="ip">
+
+                <span id="serverIP">
+
+                    DeadZoneSMP-brUa.aternos.me
+
+                </span>
+
+
+                <button
+                    onclick="copyIP()"
+                >
+
+                    Copy IP
+
+                </button>
+
+            </div>
+
+
+
+            <!-- BUTTONS -->
+
+            <div class="buttons">
+
+
+                <button
+                    onclick="showHowToPlay()"
+                >
+
+                    🎮 How to Play
+
+                </button>
+
+
+                <button
+                    class="secondary"
+                    onclick="scrollToRules()"
+                >
+
+                    📜 Server Rules
+
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- ========================================
+     ABOUT
+======================================== -->
+
+<section id="about">
+
+
+    <h2 class="section-title">
+
+        About <span>Dead Zone</span>
+
+    </h2>
+
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <h3>
+                ⚔️ Survival
+            </h3>
+
+            <p>
+
+                Explore the world,
+                gather resources,
+                build your base
+                and survive.
+
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                🌎 Your Story
+            </h3>
+
+            <p>
+
+                Create your own story
+                and decide how you
+                want to play.
+
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                👥 Community
+            </h3>
+
+            <p>
+
+                Play with friends,
+                meet new people
+                and build together.
+
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                🔥 Events
+            </h3>
+
+            <p>
+
+                Participate in exciting
+                events and compete
+                with other players.
+
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ========================================
+     RULES
+======================================== -->
+
+<section id="rules">
+
+
+    <h2 class="section-title">
+
+        Server <span>Rules</span>
+
+    </h2>
+
+
+    <div class="cards">
+
+
+        <!-- RULE 1 -->
+
+        <div class="card">
+
+            <div class="rule-number">
+                RULE 01
+            </div>
+
+            <h3>
+                🚫 Hacked Clients
+            </h3>
+
+            <p>
+
+                Using hacked clients will
+                result in a permanent IP ban.
+                You may appeal your ban
+                through our Discord server.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- RULE 2 -->
+
+        <div class="card">
+
+            <div class="rule-number">
+                RULE 02
+            </div>
+
+            <h3>
+                ⚠️ Discrimination
+            </h3>
+
+            <p>
+
+                Do not discriminate against
+                the server, staff or other
+                players. Violations will result
+                in a 3-day ban. Repeated
+                violations will result in a
+                permanent ban. Repeating this
+                on an alternate account will
+                result in a permanent IP ban.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- RULE 3 -->
+
+        <div class="card">
+
+            <div class="rule-number">
+                RULE 03
+            </div>
+
+            <h3>
+                👁️ Freecam
+            </h3>
+
+            <p>
+
+                Using Freecam will result
+                in a permanent ban.
+                You may still play on
+                an alternate account.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- RULE 4 -->
+
+        <div class="card">
+
+            <div class="rule-number">
+                RULE 04
+            </div>
+
+            <h3>
+                📦 Advantageous Resource Packs
+            </h3>
+
+            <p>
+
+                Resource packs that give you
+                an unfair advantage in the game
+                are not allowed. Using them will
+                result in a one-month ban.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- RULE 5 -->
+
+        <div class="card">
+
+            <div class="rule-number">
+                RULE 05
+            </div>
+
+            <h3>
+                💬 Spam & Toxic Behavior
+            </h3>
+
+            <p>
+
+                Spamming, repeatedly asking
+                for free kits, asking for OP,
+                or using racist language is
+                not allowed.
+
+                <br><br>
+
+                Your first offense will result
+                in a warning and a reminder
+                to read the rules.
+
+                <br><br>
+
+                Repeated offenses can result
+                in a 1-hour mute, 3-day ban,
+                1-week ban, and eventually
+                a permanent IP ban.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- RULE 6 -->
+
+        <div class="card">
+
+            <div class="rule-number">
+                RULE 06
+            </div>
+
+            <h3>
+                🌐 External Advantages
+            </h3>
+
+            <p>
+
+                Websites or external tools
+                that give you an unfair
+                advantage are forbidden.
+
+                <br><br>
+
+                Examples include seed maps
+                or tools that allow you to
+                recreate the world in order
+                to locate bases.
+
+                <br><br>
+
+                Violations will result in a
+                permanent ban. Repeating this
+                on an alternate account will
+                result in a permanent IP ban.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- RULE 7 -->
+
+        <div class="card">
+
+            <div class="rule-number">
+                RULE 07
+            </div>
+
+            <h3>
+                🕳️ Rule Loopholes
+            </h3>
+
+            <p>
+
+                Do not attempt to bypass
+                the rules or exploit loopholes
+                in them.
+
+                <br><br>
+
+                Violations will result in a ban.
+                Repeating this on an alternate
+                account will result in a
+                permanent IP ban.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- RULE 8 -->
+
+        <div class="card">
+
+            <div class="rule-number">
+                RULE 08
+            </div>
+
+            <h3>
+                💥 Lag Machines
+            </h3>
+
+            <p>
+
+                Do not build lag machines or
+                intentionally attempt to crash,
+                overload or lag the server.
+
+                <br><br>
+
+                Violations will result in a ban.
+                Repeated violations will result
+                in a permanent IP ban.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- RULE 9 -->
+
+        <div class="card">
+
+            <div class="rule-number">
+                RULE 09
+            </div>
+
+            <h3>
+                🏷️ Appropriate Nickname
+            </h3>
+
+            <p>
+
+                Always use an appropriate
+                nickname.
+
+                <br><br>
+
+                Offensive, inappropriate or
+                disruptive nicknames are
+                not allowed.
+
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ========================================
+     DISCORD
+======================================== -->
+
+<section id="discord">
+
+
+    <div class="discord">
+
+
+        <h2>
+            💬 Join Our Discord
+        </h2>
+
+
+        <p>
+
+            Have questions, want to appeal
+            a ban, report a player or talk
+            with the community?
+
+            Join the official
+            Dead Zone SMP Discord.
+
+        </p>
+
+
+        <button
+            class="discord-button"
+            onclick="openDiscord()"
+        >
+
+            Join Discord
+
+        </button>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ========================================
+     DONATE
+======================================== -->
+
+<section id="donate">
+
+
+    <div class="donate">
+
+
+        <h2>
+            💎 Support Dead Zone
+        </h2>
+
+
+        <p>
+
+            Want to support the server?
+
+            Our store will be available soon.
+
+        </p>
+
+
+        <button
+            onclick="showNotification(
+                'The store is coming soon!'
+            )"
+        >
+
+            Open Store
+
+        </button>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ========================================
+     FOOTER
+======================================== -->
+
+<footer>
+
+    © 2026 Dead Zone SMP.
+    All rights reserved.
+
+</footer>
+
+
+
+<!-- ========================================
+     NOTIFICATION
+======================================== -->
+
+<div
+    id="notification"
+    class="notification"
+>
+    IP copied!
+</div>
+
+
+
+<!-- ========================================
+     HOW TO PLAY MODAL
+======================================== -->
+
+<div
+    id="howToPlayModal"
+    class="modal"
+>
+
+
+    <div class="modal-box">
+
+
+        <button
+            class="close"
+            onclick="closeModal()"
+            aria-label="Close"
+        >
+
+            ×
+
+        </button>
+
+
+        <h2>
+            🎮 How to Play
+        </h2>
+
+
+        <p>
+
+            <strong>1.</strong>
+            Open Minecraft Java Edition.
+
+            <br><br>
+
+
+            <strong>2.</strong>
+            Click <b>Multiplayer</b>.
+
+            <br><br>
+
+
+            <strong>3.</strong>
+            Click <b>Add Server</b>.
+
+            <br><br>
+
+
+            <strong>4.</strong>
+            Enter the server address:
+
+            <br><br>
+
+
+            <code>
+                DeadZoneSMP-brUa.aternos.me
+            </code>
+
+            <br><br>
+
+
+            <strong>5.</strong>
+            Click <b>Done</b>
+            and join Dead Zone SMP!
+
+        </p>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================
+     JAVASCRIPT
+======================================== -->
+
+<script>
+
+
+/*
+    ========================================
+    SERVER SETTINGS
+    ========================================
+*/
+
+
+const SERVER_IP =
+    "DeadZoneSMP-brUa.aternos.me";
+
+
+const API_URL =
+    "https://api.mcsrvstat.us/3/" +
+    encodeURIComponent(SERVER_IP);
+
+
+
+/*
+    ========================================
+    UPDATE SERVER STATUS
+    ========================================
+*/
+
+
+async function updateServerStatus() {
+
+
+    const statusBox =
+        document.getElementById(
+            "serverStatus"
+        );
+
+
+    const statusText =
+        document.getElementById(
+            "statusText"
+        );
+
+
+    const players =
+        document.getElementById(
+            "playersOnline"
+        );
+
+
+    /*
+        Show checking state
+    */
+
+
+    statusBox.className =
+        "status";
+
+
+    statusText.innerText =
+        "CHECKING SERVER...";
+
+
+    players.innerText =
+        "Checking players...";
+
+
+    try {
+
+
+        const response =
+            await fetch(API_URL);
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "API request failed"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        /*
+            SERVER ONLINE
+        */
+
+
+        if (data.online === true) {
+
+
+            statusBox.className =
+                "status online";
+
+
+            statusText.innerText =
+                "SERVER ONLINE";
+
+
+            const online =
+                data.players &&
+                typeof data.players.online
+                    === "number"
+
+                    ? data.players.online
+
+                    : 0;
+
+
+            const max =
+                data.players &&
+                typeof data.players.max
+                    === "number"
+
+                    ? data.players.max
+
+                    : "?";
+
+
+            players.innerText =
+                `Players Online: ${online} / ${max}`;
+
+
+        }
+
+
+        /*
+            SERVER OFFLINE
+        */
+
+
+        else {
+
+
+            statusBox.className =
+                "status offline";
+
+
+            statusText.innerText =
+                "SERVER OFFLINE";
+
+
+            players.innerText =
+                "The server is currently offline.";
+
+        }
+
+
+    }
+
+
+    catch (error) {
+
+
+        console.error(
+            "Server status error:",
+            error
+        );
+
+
+        statusBox.className =
+            "status error";
+
+
+        statusText.innerText =
+            "STATUS UNAVAILABLE";
+
+
+        players.innerText =
+            "Could not check the server right now.";
+
+    }
+
+}
+
+
+
+/*
+    ========================================
+    COPY SERVER IP
+    ========================================
+*/
+
+
+async function copyIP() {
+
+
+    try {
+
+
+        await navigator.clipboard.writeText(
+            SERVER_IP
+        );
+
+
+        showNotification(
+            "Server IP copied!"
+        );
+
+
+    }
+
+
+    catch (error) {
+
+
+        showNotification(
+            "Copy failed: " + SERVER_IP
+        );
+
+    }
+
+}
+
+
+
+/*
+    ========================================
+    NOTIFICATION
+    ========================================
+*/
+
+
+let notificationTimer;
+
+
+function showNotification(message) {
+
+
+    const notification =
+        document.getElementById(
+            "notification"
+        );
+
+
+    notification.innerText =
+        message;
+
+
+    notification.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        notificationTimer
+    );
+
+
+    notificationTimer =
+        setTimeout(
+            () => {
+
+                notification.classList.remove(
+                    "show"
+                );
+
+            },
+            2500
+        );
+
+}
+
+
+
+/*
+    ========================================
+    HOW TO PLAY
+    ========================================
+*/
+
+
+function showHowToPlay() {
+
+
+    document
+        .getElementById(
+            "howToPlayModal"
+        )
+        .classList.add(
+            "show"
+        );
+
+
+    document.body.style.overflow =
+        "hidden";
+
+}
+
+
+
+function closeModal() {
+
+
+    document
+        .getElementById(
+            "howToPlayModal"
+        )
+        .classList.remove(
+            "show"
+        );
+
+
+    document.body.style.overflow =
+        "";
+
+}
+
+
+
+/*
+    ========================================
+    CLOSE MODAL BY CLICKING OUTSIDE
+    ========================================
+*/
+
+
+document
+    .getElementById(
+        "howToPlayModal"
+    )
+    .addEventListener(
+        "click",
+        function(event) {
+
+
+            if (
+                event.target === this
+            ) {
+
+                closeModal();
+
+            }
+
+        }
+    );
+
+
+
+/*
+    ========================================
+    CLOSE MODAL WITH ESC
+    ========================================
+*/
+
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+
+/*
+    ========================================
+    RULES SCROLL
+    ========================================
+*/
+
+
+function scrollToRules() {
+
+
+    document
+        .getElementById("rules")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+
+}
+
+
+
+/*
+    ========================================
+    DISCORD
+    ========================================
+*/
+
+
+function openDiscord() {
+
+
+    window.open(
+        "https://discord.gg/gS4rav8pe",
+        "_blank"
+    );
+
+}
+
+
+
+/*
+    ========================================
+    START SERVER CHECK
+    ========================================
+*/
+
+
+updateServerStatus();
+
+
+
+/*
+    Check every 10 seconds
+*/
+
+
+setInterval(
+    updateServerStatus,
+    10000
+);
+
+
+</script>
+
+
+</body>
+
+</html>
